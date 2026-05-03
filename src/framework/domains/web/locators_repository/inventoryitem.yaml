@@ -1,4 +1,4 @@
 inventoryitem:
-  backpack:
+  addtocart:
     role: "button"
     name: "Add to cart"

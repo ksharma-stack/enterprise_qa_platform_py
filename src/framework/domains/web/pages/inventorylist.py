@@ -21,7 +21,7 @@ class InventoryList(BasePage):
     # -------------------------
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
     def select_product(self, inventory: str) -> None:
-        """Login using username and password"""
+        """Select item from inventory list"""
         ElementActions.click(self, self.locators, inventory)
 
     # -------------------------

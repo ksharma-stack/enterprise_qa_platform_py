@@ -17,22 +17,15 @@ class InventoryItem(BasePage):
         self.locators = _load_yaml(__class__.__name__, False)[self.classname.lower()]
 
     # -------------------------
-    # Login page actions
+    # Inventory page actions
     # -------------------------
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
-    def open(self, base_url, expected_title) -> None:
-        """Navigate to the home page and wait for DOM content to load."""
-        self.goto(base_url, expected_title)
-
-    @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
-    def login(self, user: str, password: str) -> None:
-        """Login using username and password"""
-        ElementActions.fill(self, self.locators, "username", user)
-        ElementActions.fill(self, self.locators, "password", password)
-        ElementActions.click(self, self.locators, "login_button")
+    def add_to_cart(self) -> None:
+        """clicks add to cart button on product/inventory page"""
+        ElementActions.click(self, self.locators, "addtocart")
 
     # -------------------------
-    # Login page assertions
+    # Inventory page assertions
     # -------------------------
     @retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
     def assert_loaded(self) -> None:
