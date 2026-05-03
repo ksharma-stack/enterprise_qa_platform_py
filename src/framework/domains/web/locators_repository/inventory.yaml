@@ -1,0 +1,8 @@
+inventorypage:
+  backpack:
+    role: "image"
+    name: "Sauce Labs Backpack"
+
+  bikelight:
+    role: "image"
+    name: "Sauce Labs Bike Light"
