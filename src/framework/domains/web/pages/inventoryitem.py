@@ -7,7 +7,7 @@ from src.framework.domains.web.base_page import BasePage
 from src.framework.domains.web.locators.locator_actions import ElementActions
 
 
-class LoginPage(BasePage):
+class InventoryItem(BasePage):
     """Login page object methods and assertions."""
 
     def __init__(self, page, config):
