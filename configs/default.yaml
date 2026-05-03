@@ -1,0 +1,43 @@
+env: "dev"
+
+execution:
+  parallel_workers: 4
+  retries: 1
+  timeout_sec: 60
+
+webapps:
+desktopapps:
+apis:
+
+web:
+  base_url: "https://www.saucedemo.com/"
+  browser: "chromium" # chromium | firefox | webkit
+  headless: true
+  trace_on_failure: true
+  screenshot_on_failure: true
+  viewport:
+    width: 1440
+    height: 900
+  slow_mo_ms: 0
+  default_timeout_ms: 15000
+
+api:
+  base_url: "https://api.restful-api.dev"
+  timeout_sec: 30
+  auth:
+    type: "bearer"
+    token_env_var: "3eea4e03-bfbf-4944-8133-2ef6212670eb"
+
+desktop:
+  platform: "windows"
+  backend: "uia"
+  app_path: "notepad.exe"
+  start_timeout_s: 10
+  default_timeout_s: 10
+  implicit_wait_sec: 5
+
+logging:
+  level: "INFO"
+  log_cli: true
+  screenshots_dir: "artifacts/screenshots/"
+  file: "artifacts/logs/run.log"

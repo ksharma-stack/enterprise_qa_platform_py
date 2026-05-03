@@ -1,0 +1,20 @@
+execution:
+  parallel_workers: 2
+  retries: 0
+  timeout_sec: 60
+web:
+  base_url: https://www.saucedemo.com
+  browser: chromium
+  headless: false
+  screenshot_on_failure: true
+  trace_on_failure: true
+api:
+  base_url: http://localhost:8080
+  timeout_sec: 30
+desktop:
+  app_path: C:\Program Files\Notepad++\notepad++.exe
+  platform: windows
+  backend: uia
+logging:
+  level: INFO
+  file: artifacts/logs/devrun.log

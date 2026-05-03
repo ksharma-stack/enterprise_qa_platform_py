@@ -1,0 +1,49 @@
+[project]
+name = "enterprise-qa-platform"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Kanchan Sharma",email = "kanchan.sharma@coforge.com"}
+]
+requires-python = ">=3.13"
+dependencies = [
+    "tenacity (>=9.1.4,<10.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pydantic (>=2.13.3,<3.0.0)",
+    "pytest (>=9.0.3,<10.0.0)",
+    "pytest-xdist (>=3.8.0,<4.0.0)",
+    "pytest-timeout (>=2.4.0,<3.0.0)",
+    "pytest-rerunfailures (>=16.1,<17.0)",
+    "pytest-html (>=4.2.0,<5.0.0)",
+    "allure-pytest (>=2.16.0,<3.0.0)",
+    "pytest-playwright (>=0.7.2,<0.8.0)",
+    "playwright (>=1.59.0,<2.0.0)",
+    "requests (>=2.33.1,<3.0.0)",
+    "pywinauto (>=0.6.9,<0.7.0)",
+    "structlog (>=25.5.0,<26.0.0)",
+    "pyyaml (>=6.0.3,<7.0.0)",
+    "python-dotenv (>=1.2.2,<2.0.0)"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts="-ra -q"
+markers =[
+    "poc: poc test",
+    "web: web UI tests",
+    "api: API tests",
+    "desktop: desktop tests",
+    "integration: integration tests",
+    "smoke: smoke suite",
+    "regression: regression suite",
+    "slow: long-running tests",
+    "serial: tests that should not run in parallel",
+]

@@ -1,0 +1,14 @@
+loginpage:
+  username:
+    css: "#user-name"
+    xpath: "//input[@name='user-name']"
+    role: "textbox"
+    name: "Username"
+
+  password:
+    css: "#password"
+    xpath: "//input[@data-test='password']"
+
+  login_button:
+    role: "button"
+    name: "Login"
