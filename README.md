@@ -16,6 +16,95 @@
     mkdir tests                 :> Test files
     mkdir ci                    :> YAML CI/CD pipeline files
 
+# Project Structure
+
+```
+enterprise_qa_platform_py/
+├── artifacts/                    # Test artifacts and reports
+├── ci/                          # CI/CD pipeline configuration files
+├── configs/                     # Configuration files
+│   ├── default.yaml             # Default configuration
+│   └── dev.yaml                 # Development configuration
+├── src/                         # Framework source code
+│   └── framework/
+│       ├── adapters/            # External integrations
+│       │   └── playwright_factory.py
+│       ├── core/                # Core framework functionality
+│       │   ├── config/
+│       │   │   └── models.py     # Configuration data models
+│       │   ├── exceptions/
+│       │   │   └── exceptions.py # Custom exception definitions
+│       │   ├── governance/
+│       │   │   └── yaml_schema.py # YAML schema validation
+│       │   ├── observability/   # Logging and reporting
+│       │   │   ├── logger_config/
+│       │   │   │   ├── log_setup.py
+│       │   │   │   ├── logger_v1.py
+│       │   │   │   └── logger_v2.py
+│       │   │   └── reporting/
+│       │   └── quality/         # QA assertions and heuristics
+│       │       ├── assertions/
+│       │       │   ├── assert_api.py      # API assertions
+│       │       │   ├── assert_desktop.py  # Desktop app assertions
+│       │       │   ├── assert_evidence.py # Evidence-based assertions
+│       │       │   └── assert_web.py      # Web assertions
+│       │       └── heuristics/
+│       │           └── flaky_detection.py # Flaky test detection
+│       ├── utils/               # Utility functions
+│       │   ├── utils_date.py
+│       │   ├── utils_file.py
+│       │   ├── utils_generic.py
+│       │   ├── utils_loader.py
+│       │   ├── utils_path.py
+│       │   ├── utils_string.py
+│       │   └── utils_yaml_generator.py
+│       ├── domains/             # Domain-specific implementations
+│       │   ├── api/             # API testing domain
+│       │   └── web/             # Web testing domain
+│       │       ├── base_page.py
+│       │       ├── locators/     # Locator management
+│       │       │   ├── locator_actions.py
+│       │       │   └── locator_resolver.py
+│       │       ├── locators_repository/
+│       │       │   └── loginpage.yaml
+│       │       └── pages/        # Page object models
+│       │           └── login.py
+│       └── services/            # Business services
+├── tests/                       # Test files
+│   ├── conftest.py             # Pytest configuration
+│   ├── api/                    # API tests
+│   ├── desktop/                # Desktop application tests
+│   ├── poc/                    # Proof of concept tests
+│   │   ├── test_hello.py
+│   │   └── test_web.py
+│   └── web/                    # Web tests
+├── pyproject.toml              # Poetry dependencies and project metadata
+├── README.md                   # Project documentation
+└── LearningAndFixing_Issues.md # Learning notes and issues log
+```
+
+## Key Components
+
+### Framework (`src/framework/`)
+- **Adapters**: External integrations (Playwright, etc.)
+- **Core**: Central framework logic including config, exceptions, and observability
+- **Utils**: Reusable utility functions for common operations
+- **Domains**: Domain-specific implementations (API, Web, Desktop)
+- **Services**: Business service layers
+
+### Configuration (`configs/`)
+- Environment-specific YAML configurations
+- Default and development settings
+
+### Tests (`tests/`)
+- API tests
+- Web tests (Selenium/Playwright)
+- Desktop application tests
+- Proof of concepts
+
+### CI/CD (`ci/`)
+- Pipeline configuration files
+
 # Commands :
 
 
