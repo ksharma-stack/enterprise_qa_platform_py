@@ -11,3 +11,7 @@ class ConfigError(FrameworkError):
 
 class ApiError(FrameworkError):
     """Raised when API calls fail in a framework-managed way."""
+
+
+class LocatorResolutionError(FrameworkError):
+    """Raised when no locator strategy could target a visible element."""

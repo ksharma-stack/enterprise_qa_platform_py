@@ -1,0 +1,108 @@
+# Locator Configuration
+# Controls versioning, healing, caching, and observability
+
+locator_resolution:
+  # Version strategy: how to resolve version specifiers
+  version_strategy: "semantic" # semantic | exact | range
+
+  # Default version when none specified
+  default_version: "latest"
+
+  # Per-page version pinning (optional)
+  page_versions:
+    LoginPage: "latest" # Follow latest stable
+    InventoryList: "latest"
+    InventoryItem: "latest"
+    # Examples:
+    # OrderPage: "2.1.0"          # Pin to exact version
+    # CartPage: "2.x"             # Latest patch in 2.x series
+    # CheckoutPage: "2"           # Latest in major 2
+
+healing:
+  # Enable self-healing pipeline
+  enabled: true
+
+  # MCP server for LLM-based healing
+  mcp_server_url: "http://localhost:8000"
+  mcp_timeout_seconds: 10
+
+  # Confidence threshold for MCP suggestions (0.0 - 1.0)
+  confidence_threshold: 0.85
+
+  # Maximum healing attempts per failure
+  max_healing_attempts: 3
+
+  # Fallback strategy if version walk fails
+  fallback_strategy: "version_walk" # version_walk | all_fallbacks | mcp_only
+
+  # Healing reporting
+  reporting:
+    enabled: true
+    store_healing_evidence: true # Save DOM snapshots
+    auto_ticket: false # Create tickets for failed healing
+    ticket_label: "locator-healing"
+
+  # Healing cache (avoid re-healing same failure)
+  cache:
+    enabled: true
+    ttl_seconds: 3600 # Cache healing results for 1 hour
+    invalidate_on_version_change: true
+
+cache:
+  # Locator resolution caching
+  enabled: true
+  ttl_seconds: 3600
+  invalidate_on_version_change: true
+
+observability:
+  # Logging level for locator operations
+  log_level: "INFO" # DEBUG | INFO | WARNING | ERROR
+
+  # Metrics to track (for health dashboard)
+  metrics:
+    enabled: true
+    track_resolution_latency: true
+    track_healing_success_rate: true
+    track_version_distribution: true
+
+  # Health metrics export
+  health_export:
+    enabled: true
+    format: "json" # json | prometheus | cloudwatch
+    interval_seconds: 300 # Export every 5 min
+    destination: "src/framework/domains/web/locators_repository/health/"
+
+versioning:
+  # Major.minor.patch for locators
+  semantic_versioning: true
+
+  # Automatic version bumping rules
+  auto_bump:
+    selector_change: "patch" # css/xpath change → patch
+    fallback_added: "minor" # new fallback → minor
+    deprecation: "major" # removal → major
+
+  # Deprecation management
+  deprecation:
+    notice_period_days: 60 # Warn 60 days before removal
+    removal_date_field: "removed_in" # Use in YAML: removed_in: "2026-08-01"
+
+# Example: Migrating pages to new version strategy
+# Phase 1 (Week 1-2): Enable healing and monitoring
+#   - Set healing.enabled = true
+#   - Collect baseline metrics
+#
+# Phase 2 (Week 3-4): Migrate first page
+#   - Create v2/loginpage.yaml with new schema
+#   - Test healing with LoginPage
+#   - Monitor healing_success_rate
+#
+# Phase 3 (Week 5-6): Roll out to more pages
+#   - Migrate InventoryList, InventoryItem
+#   - Verify no test regression
+#   - Document patterns
+#
+# Phase 4 (Week 7+): Full adoption
+#   - Deprecate v1 format
+#   - Enforce new schema in CI/CD
+#   - Archive old YAML files
