@@ -6,7 +6,10 @@ from __future__ import annotations
 
 from typing import Any
 
+from framework.core.observability.logger_config.log_setup import LogFactory
 from src.framework.domains.web.locators.locator_resolver import LocatorResolver
+
+logger = LogFactory.get_logger(__name__)
 
 
 class ElementActions:
@@ -16,6 +19,7 @@ class ElementActions:
     def fill(page_host: Any, locators: dict, locatorname: str, value: str) -> None:
         """Type into the resolved locator."""
         loc = LocatorResolver.resolve(page_host.page, locators, locatorname)
+        logger.info(f"Fill element {locatorname}")
         loc.fill(value)
 
     @staticmethod
