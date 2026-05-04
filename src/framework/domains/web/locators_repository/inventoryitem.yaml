@@ -1,4 +1,59 @@
+contract:
+  schema_version: "2.1"
+  backwards_compatible: true
+  locator_spec: "enterprise-a11y-selfhealing"
+
 inventoryitem:
+
+  page_metadata:
+    page_name: "Inventory Item Detail"
+    app: "Customer Portal"
+    owner_team: "Catalog Team"
+    review_cycle_days: 30
+    supported_targets:
+      web: true
+      desktop: false
+      api: false
+
   addtocart:
-    role: "button"
-    name: "Add to cart"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+        minor_on_fallback_change: true
+        patch_on_metadata_only: true
+
+    primary:
+      strategy: "accessibility"
+      a11y:
+        role: "button"
+        name: "Add to cart"
+
+    fallback:
+      - strategy: "css"
+        value: "button[data-test='add-to-cart'], button:has-text('Add to cart')"
+        confidence: 0.85
+      - strategy: "xpath"
+        value: "//button[normalize-space()='Add to cart']"
+        confidence: 0.65
+
+    healing:
+      enabled: true
+      mode: "suggest-only" # auto | suggest-only | off
+      max_attempts: 1
+      approval_required: true
+      approvers:
+        - "qa-architect"
+        - "product-owner"
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Accessibility-first locator onboarding for primary CTA"
+      runtime:
+        stability_score: 94
+        last_failure: null
+        healing_attempts: 0
+        healing_success_rate: 0.0
+        last_used_selector: "primary"

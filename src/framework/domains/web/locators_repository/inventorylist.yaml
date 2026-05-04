@@ -1,8 +1,100 @@
+contract:
+  schema_version: "2.1"
+  backwards_compatible: true
+  locator_spec: "enterprise-a11y-selfhealing"
+
 inventorylist:
+
+  page_metadata:
+    page_name: "Inventory List"
+    app: "Customer Portal"
+    owner_team: "Catalog Team"
+    review_cycle_days: 30
+    supported_targets:
+      web: true
+      desktop: false
+      api: false
+
   backpack:
-    role: "img"
-    name: "Sauce Labs Backpack"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+        minor_on_fallback_change: true
+        patch_on_metadata_only: true
+
+    primary:
+      strategy: "accessibility"
+      a11y:
+        role: "img"
+        name: "Sauce Labs Backpack"
+
+    fallback:
+      - strategy: "css"
+        value: "img[alt='Sauce Labs Backpack']"
+        confidence: 0.90
+      - strategy: "xpath"
+        value: "//img[@alt='Sauce Labs Backpack']"
+        confidence: 0.70
+
+    healing:
+      enabled: true
+      mode: "suggest-only" # auto | suggest-only | off
+      max_attempts: 1
+      approval_required: true
+      approvers:
+        - "qa-architect"
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Accessibility-first locator onboarding for inventory image"
+      runtime:
+        stability_score: 92
+        last_failure: null
+        healing_attempts: 0
+        healing_success_rate: 0.0
+        last_used_selector: "primary"
 
   bikelight:
-    role: "img"
-    name: "Sauce Labs Bike Light"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+        minor_on_fallback_change: true
+        patch_on_metadata_only: true
+
+    primary:
+      strategy: "accessibility"
+      a11y:
+        role: "img"
+        name: "Sauce Labs Bike Light"
+
+    fallback:
+      - strategy: "css"
+        value: "img[alt='Sauce Labs Bike Light']"
+        confidence: 0.90
+      - strategy: "xpath"
+        value: "//img[@alt='Sauce Labs Bike Light']"
+        confidence: 0.70
+
+    healing:
+      enabled: true
+      mode: "suggest-only"
+      max_attempts: 1
+      approval_required: true
+      approvers:
+        - "qa-architect"
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Accessibility-first locator onboarding for inventory image"
+      runtime:
+        stability_score: 91
+        last_failure: null
+        healing_attempts: 0
+        healing_success_rate: 0.0
+        last_used_selector: "primary"

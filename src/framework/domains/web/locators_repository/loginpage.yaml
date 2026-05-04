@@ -1,14 +1,123 @@
+contract:
+  schema_version: "2.1"
+  backwards_compatible: true
+  locator_spec: "enterprise-a11y-selfhealing"
+
 loginpage:
+
+  page_metadata:
+    page_name: "Login Page"
+    app: "Customer Portal"
+    owner_team: "Auth Team"
+    review_cycle_days: 30
+    supported_targets:
+      web: true
+      desktop: false
+      api: false
+
   username:
-    css: "#user-name"
-    xpath: "//input[@name='user-name']"
-    role: "textbox"
-    name: "Username"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+        minor_on_fallback_change: true
+        patch_on_metadata_only: true
+
+    primary:
+      strategy: "accessibility"
+      a11y:
+        role: "textbox"
+        name: "Username"
+        aria_required: true
+
+    fallback:
+      - strategy: "css"
+        value: "#user-name"
+        confidence: 0.85
+      - strategy: "xpath"
+        value: "//input[@name='user-name']"
+        confidence: 0.60
+
+    healing:
+      enabled: true
+      mode: "suggest-only" # auto | suggest-only | off
+      max_attempts: 2
+      approval_required: true
+      approvers:
+        - "qa-architect"
+        - "lead-sdet"
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Accessibility-first locator onboarding"
+      runtime:
+        stability_score: 90
+        last_failure: null
+        healing_attempts: 0
+        healing_success_rate: 0.0
+        last_used_selector: "primary"
 
   password:
-    css: "#password"
-    xpath: "//input[@data-test='password']"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+        minor_on_fallback_change: true
+        patch_on_metadata_only: true
+
+    primary:
+      strategy: "css"
+      value: "#password"
+
+    fallback:
+      - strategy: "xpath"
+        value: "//input[@data-test='password']"
+        confidence: 0.70
+
+    healing:
+      enabled: true
+      mode: "auto"
+      max_attempts: 2
+      approval_required: false
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Normalized locator structure with primary and fallback selectors"
+      runtime:
+        stability_score: 85
+        last_failure: null
+        healing_attempts: 0
+        healing_success_rate: 0.0
+        last_used_selector: "primary"
 
   login_button:
-    role: "button"
-    name: "Login"
+    version:
+      current: "1.0.0"
+      policy:
+        major_change_requires_approval: true
+
+    primary:
+      strategy: "accessibility"
+      a11y:
+        role: "button"
+        name: "Login"
+
+    fallback: []
+
+    healing:
+      enabled: false
+
+    metadata:
+      static:
+        element_version_history: [ "1.0.0" ]
+        created_on: "2026-05-04"
+        change_reason: "Accessibility-first locator onboarding"
+      runtime:
+        stability_score: 95
+        last_failure: null
+        healing_attempts: 0
+        last_used_selector: "primary"
