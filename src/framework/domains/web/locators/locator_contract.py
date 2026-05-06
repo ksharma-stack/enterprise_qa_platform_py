@@ -26,6 +26,8 @@ class LocatorStrategy:
 
 @dataclass(frozen=True)
 class HealingRuntime:
+    """Runtime configuration for healing strategies."""
+
     enabled: bool
     mode: str
     max_strategies: int | None
@@ -116,9 +118,7 @@ def _legacy_strategies(defn: dict[str, Any]) -> list[LocatorStrategy]:
         )
     if "css" in defn:
         out.append(
-            LocatorStrategy(
-                kind="css", label="legacy_css", selector=str(defn["css"])
-            )
+            LocatorStrategy(kind="css", label="legacy_css", selector=str(defn["css"]))
         )
     if "xpath" in defn:
         out.append(
@@ -129,7 +129,9 @@ def _legacy_strategies(defn: dict[str, Any]) -> list[LocatorStrategy]:
     return out
 
 
-def build_strategy_plan(defn: dict[str, Any]) -> tuple[list[LocatorStrategy], HealingRuntime]:
+def build_strategy_plan(
+    defn: dict[str, Any],
+) -> tuple[list[LocatorStrategy], HealingRuntime]:
     """
     Returns ordered strategies and healing flags for logging / limits.
     """
@@ -166,7 +168,9 @@ def build_strategy_plan(defn: dict[str, Any]) -> tuple[list[LocatorStrategy], He
         strategies.extend(_legacy_strategies(defn))
 
     if max_strategies is not None:
-        strategies = strategies[:max_strategies]
+        max_strategies = len(strategies)
+
+    strategies = strategies[:max_strategies]
 
     return strategies, HealingRuntime(
         enabled=enabled,
