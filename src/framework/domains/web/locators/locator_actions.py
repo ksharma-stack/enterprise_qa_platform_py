@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from framework.core.observability.logger_config.log_setup import LogFactory
+from src.framework.core.observability.logger_config.log_setup import LogFactory
 from src.framework.domains.web.locators.locator_resolver import LocatorResolver
 
 logger = LogFactory.get_logger(__name__)

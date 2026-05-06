@@ -27,7 +27,7 @@ loginpage:
       strategy: "accessibility"
       a11y:
         role: "textbox"
-        name: "Username1"
+        name: "Username"
         aria_required: true
 
     fallback:
