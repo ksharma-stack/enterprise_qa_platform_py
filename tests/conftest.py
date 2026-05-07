@@ -20,6 +20,8 @@ from src.framework.core.utils.utils_path import mkdir
 from src.framework.core.observability.logger_config.log_setup import LogFactory
 
 from src.framework.adapters.playwright_factory import create_context, create_browser
+from src.framework.adapters.api_factory import create_api_client_from_settings
+from src.framework.domains.api.client import ApiClient
 
 
 def pytest_addoption(parser: pytest.Parser) -> None:
@@ -81,7 +83,7 @@ def config(pytestconfig: pytest.Config) -> Settings:
         Settings: Loaded configuration config for the test environment.
     """
     env = pytestconfig.getoption("--env")
-    config_dir: str = None
+    config_dir: str = None # type: ignore
     # Conditionally set base path
     config_dir = pytestconfig.getoption("--config-dir")
 
@@ -228,3 +230,24 @@ def page(
 # -------------------------
 # API Fixtures
 # -------------------------
+@pytest.fixture(scope="session")
+def api_client(config: Settings, logger):
+    """Create a reusable API client for session-level API tests."""
+    client = create_api_client_from_settings(config, logger)
+    yield client
+    client.close()
+
+
+@pytest.fixture(scope="session")
+def api_ready(api_client: ApiClient):
+    """
+    Probe API availability once per session.
+    Skip API tests quickly when endpoint is not reachable.
+    """
+    try:
+        # The public restful-api.dev endpoint supports /objects.
+        response = api_client.get("/objects", timeout=5)
+        if response.status_code >= 500:
+            pytest.skip("API endpoint is unhealthy (5xx).")
+    except Exception as exc:
+        pytest.skip(f"API endpoint is not reachable: {exc}")
