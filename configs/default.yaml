@@ -41,3 +41,11 @@ logging:
   log_cli: true
   screenshots_dir: "artifacts/screenshots/"
   file: "artifacts/logs/run.log"
+
+ai:
+  enabled: true
+  provider: "azure_openai"
+  use_cases: { locator_heal: on|off, rca: on|off, testgen: on|off }
+  redaction: { headers: [ ... ], jsonpaths: [ ... ] }
+  limits: { max_tokens, max_cost_per_run, max_dom_chars }
+  approval: { required: true, mode: pr|local }

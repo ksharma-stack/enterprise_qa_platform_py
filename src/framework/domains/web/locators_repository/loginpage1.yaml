@@ -6,14 +6,14 @@ contract:
 loginpage:
 
   page_metadata:
+    page_name: "Login Page"
     app: "Customer Portal"
-    page: "Login Page"
-    owner: qa-platform
+    owner_team: "Auth Team"
     review_cycle_days: 30
-    version: "1.0.0"
-    last_verified: 2026-05-01
-    healing_policy: cautious
-    channel_support: [ web, desktop ]
+    supported_targets:
+      web: true
+      desktop: false
+      api: false
 
   username:
     version:
@@ -78,11 +78,11 @@ loginpage:
 
     primary:
       strategy: "css"
-      value: "#password"
+      value: "#password1"
 
     fallback:
       - strategy: "xpath"
-        value: "//input[@data-test='password']"
+        value: "//input[@data-test='password1']"
         confidence: 0.70
 
     healing:

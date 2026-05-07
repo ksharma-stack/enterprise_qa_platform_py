@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 import os
+from pathlib import Path
 import pytest
 from typing import Generator, Optional
 
@@ -14,7 +16,10 @@ from playwright.sync_api import (
     sync_playwright,
 )
 
+from src.framework.core.config import variables
 from src.framework.core.config.models import Settings
+
+# import framework.core.config.variables import config
 from src.framework.core.utils.utils_loader import load_settings
 from src.framework.core.utils.utils_path import mkdir
 from src.framework.core.observability.logger_config.log_setup import LogFactory
@@ -55,9 +60,10 @@ def pytest_sessionfinish(session, exitstatus):
     logger.info("Test session finished", exit_status=exitstatus)
 
 
-@pytest.hookimpl(tryfirst=True)
+@pytest.hookimpl(hookwrapper=True, tryfirst=True)
 def pytest_runtest_makereport(item, call: pytest.CallInfo):
     """Store test report for each phase and log results."""
+
     if call.when == "call":
         logger = LogFactory.get_logger(__name__)
         outcome = "failed" if call.excinfo else "passed"
@@ -67,6 +73,83 @@ def pytest_runtest_makereport(item, call: pytest.CallInfo):
             outcome=outcome,
             # duration_sec=call.duration,
         )
+
+    outcome = yield
+
+    report = outcome.get_result()
+
+    # Only act after the test call phase
+    if report.when != "call":
+        return
+    # Only generate RCA on failures (and optionally xfail)
+
+    # if report.failed:
+    # Collect deterministic context
+    artifacts_dir = os.path.join(Path(__file__).parent.resolve(), "artifacts")
+
+    context = {
+        "nodeid": item.nodeid,
+        "outcome": report.outcome,
+        "duration": getattr(report, "duration", None),
+        "longrepr": str(report.longrepr),
+        "markers": [m.name for m in item.iter_markers()],
+    }
+
+    # Optional: pull per-test logs path if you already emit logs
+    log_path = getattr(item, "qa_log_path", None)
+    if log_path:
+        context["log_path"] = log_path
+
+        #     # Optional: attach Playwright trace/screenshot if you store it on item
+        #     # e.g. item.qa_trace_path, item.qa_screenshot_path set by your fixtures
+        #     for key in ("qa_trace_path", "qa_screenshot_path", "qa_video_path"):
+        #         p = getattr(item, key, None)
+        #         if p:
+        #             context[key] = p
+
+        #     # Write raw context (always)
+        #     raw_path = os.path.join(
+        #         artifacts_dir,
+        #         "rca_context",
+        #         item.nodeid.replace("/", "_").replace("::", "__") + ".json",
+        #     )
+        #     os.makedirs(os.path.dirname(raw_path), exist_ok=True)
+        #     with open(raw_path, "w", encoding="utf-8") as f:
+        #         json.dump(context, f, indent=2)
+
+        # # --- AI hook: RCA summary (policy-controlled) ---
+        # # keep it non-blocking: failures should not fail due to AI
+        # try:
+        #     from src.framework.services.ai.rca_summary_service import RCASummaryService
+        #     from src.framework.core.ai.policies import AIPolicy
+        #     from src.framework.adapters.ai.azure_openai_client import (
+        #         AzureOpenAIProvider,
+        #     )  # or your provider
+
+        #     policy = AIPolicy.from_env_or_config()
+        #     if policy.enabled("rca"):
+        #         svc = RCASummaryService(
+        #             ai_provider=AzureOpenAIProvider.from_env(),
+        #             policy=policy,
+        #         )
+        #         rca = svc.summarize_failure(context)
+
+        #         out_path = os.path.join(
+        #             artifacts_dir,
+        #             "rca",
+        #             item.nodeid.replace("/", "_").replace("::", "__") + ".json",
+        #         )
+        #         os.makedirs(os.path.dirname(out_path), exist_ok=True)
+        #         with open(out_path, "w", encoding="utf-8") as f:
+        #             json.dump(
+        #                 rca.model_dump() if hasattr(rca, "model_dump") else rca,
+        #                 f,
+        #                 indent=2,
+        #             )
+
+        # except Exception:
+        #     # Never break test run if AI fails
+        #     pass
 
 
 # -------------------------
@@ -93,7 +176,6 @@ def config(pytestconfig: pytest.Config) -> Settings:
     #     artifacts = "automation_framework/artifacts"
     # else:
     artifacts = "artifacts"
-
     mkdir(f"{artifacts}/screenshots")
     mkdir(f"{artifacts}/traces")
     mkdir(f"{artifacts}/logs")
@@ -228,3 +310,7 @@ def page(
 # -------------------------
 # API Fixtures
 # -------------------------
+def authenticated_api_client(api_client, test_user):
+    """Provides an authenticated API client."""
+    api_client.login(test_user.username, test_user.password)
+    return api_client

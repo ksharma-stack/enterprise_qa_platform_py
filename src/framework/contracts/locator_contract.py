@@ -6,7 +6,9 @@ Supports legacy flat locators: role, name, css, xpath.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, Optional
+
+from pydantic import Field
 
 StrategyKind = Literal["a11y", "css", "xpath"]
 
@@ -31,6 +33,18 @@ class HealingRuntime:
     enabled: bool
     mode: str
     max_strategies: int | None
+
+
+@dataclass(frozen=True)
+class LocatorIntent:
+    """Runtime configuration for locator intent."""
+
+    role: str
+    name: str
+    placeholder: Optional[str] = None
+    control_type: Optional[str] = Field(
+        None, description="Desktop control type (Win32/UIA)"
+    )
 
 
 def _norm_strategy(s: str | None) -> str:

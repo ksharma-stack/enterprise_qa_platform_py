@@ -10,7 +10,7 @@ from playwright.sync_api import Locator, Page, TimeoutError as PlaywrightTimeout
 
 from src.framework.core.exceptions.exceptions import LocatorResolutionError
 from src.framework.core.observability.logger_config.log_setup import LogFactory
-from src.framework.domains.web.locators.locator_contract import (
+from src.framework.contracts.locator_contract import (
     LocatorStrategy,
     build_strategy_plan,
     is_locator_element_key,
