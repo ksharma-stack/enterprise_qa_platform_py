@@ -9,7 +9,7 @@ web:
   screenshot_on_failure: true
   trace_on_failure: true
 api:
-  base_url: http://localhost:8080
+  base_url: https://api.restful-api.dev
   timeout_sec: 30
 desktop:
   app_path: C:\Program Files\Notepad++\notepad++.exe
