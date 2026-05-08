@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from typing import Literal, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class ExecutionSettings(BaseModel):
@@ -63,6 +63,39 @@ class LoggingSettings(BaseModel):
     file: str = "artifacts/logs/run.log"
 
 
+class AzureOpenAIConfig(BaseModel):
+    """
+    Azure OpenAI configuration.
+    """
+
+    enabled: bool = True
+    endpoint: str
+    api_key: str
+    api_version: str
+    deployment: str
+    temperature: float = 0.2
+    max_tokens: int = 800
+
+    @model_validator(mode="after")
+    def validate_when_enabled(self):
+        """Validates model configs"""
+        if self.enabled:
+            missing = [
+                f
+                for f in ("endpoint", "api_key", "api_version", "deployment")
+                if getattr(self, f) is None
+            ]
+            if missing:
+                raise ValueError(f"Azure OpenAI enabled but missing fields: {missing}")
+        return self
+
+
+class AISettings(BaseModel):
+    """AI capabilities configuration."""
+
+    azure_openai: AzureOpenAIConfig = Field(default_factory=AzureOpenAIConfig)
+
+
 class Settings(BaseModel):
     """Root configuration: env, channels/domains (web/api/desktop), execution, logging."""
 
@@ -72,6 +105,7 @@ class Settings(BaseModel):
     api: ApiSettings
     desktop: DesktopSettings
     logging: LoggingSettings = Field(default_factory=LoggingSettings)
+    ai: AISettings = Field(default_factory=AISettings)
 
     # Optional: allow a "test run id" to group artifacts in CI
     run_id: Optional[str] = None

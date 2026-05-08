@@ -106,7 +106,9 @@ enterprise_qa_platform_py/
 - Pipeline configuration files
 
 # Commands :
-
+## poetry env remove python => will clean your global python env (tried for openai and it worked)
+## poetry config virtualenvs.in-project true => will tell poetry only create .venv in your project folder
+## Invoke-Expression (poetry env activate) => activates peotry env
 
 
 

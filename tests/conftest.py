@@ -16,7 +16,8 @@ from playwright.sync_api import (
     sync_playwright,
 )
 
-from src.framework.core.config import variables
+from src.framework.adapters.azure_openai_client import AzureOpenAIAdapter
+from src.framework.services.locator_healing_service import LocatorHealingService
 from src.framework.core.config.models import Settings
 
 # import framework.core.config.variables import config
@@ -314,3 +315,22 @@ def authenticated_api_client(api_client, test_user):
     """Provides an authenticated API client."""
     api_client.login(test_user.username, test_user.password)
     return api_client
+
+# -------------------------
+# AI Fixtures
+# -------------------------
+
+
+@pytest.fixture(scope="session")
+def azure_openai_service(config: Settings):
+    """
+    Session-scoped Azure OpenAI service.
+    """
+
+    # config = app_config.ai.azure_openai
+
+    if not config.enabled:
+        return None
+
+    adapter = AzureOpenAIAdapter(config)
+    return LocatorHealingService(adapter)
