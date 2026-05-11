@@ -33,17 +33,17 @@ class LocatorHealingService:
             {
                 "role": "user",
                 "content": f"""
-Intent:
-{intent}
+                Intent:
+                {intent}
 
-Constraints:
-{constraints}
+                Constraints:
+                {constraints}
 
-DOM Snapshot:
-{dom_snapshot}
+                DOM Snapshot:
+                {dom_snapshot}
 
-Return JSON list of selector candidates with confidence scores.
-""",
+                Return JSON list of selector candidates with confidence scores.
+                """,
             },
         ]
 
@@ -59,6 +59,12 @@ Return JSON list of selector candidates with confidence scores.
         import json
 
         return json.loads(raw)
+
+    def heal_locator(self, dom_snapshot: str, intent: str) -> str:
+        """
+        Use AI to suggest a new locator based on the DOM snapshot and intent.
+        """
+        return self._ai.suggest_locator(dom_snapshot, intent)
 
 
 # class SelfHealingEngine:
