@@ -61,7 +61,6 @@ ai:
     endpoint: https://complyazurefoundryproject-resource.services.ai.azure.com/api/projects/ComplyAzureFoundryProject/openai/v1
     api_key: AZURE_OPENAI_API_KEY
     deployment: "ComplyCustomModelFineTuneGpt-4o"
-    api_version: "2024-11-20"
     temperature: 0.2
     max_tokens: 800
 

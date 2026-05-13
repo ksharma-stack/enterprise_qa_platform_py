@@ -318,26 +318,13 @@ def authenticated_api_client(api_client, test_user):
 # AI Fixtures
 # -------------------------
 
-
-# @pytest.fixture(scope="session")
-# def ai_client(config: Settings) -> AzureOpenAIClient:
-#     """
-#     Session-scoped Azure OpenAI service.
-#     Created once and reused across framework.
-#     """
-#     if not config.ai.azure_openai.enabled:
-#         return None
-
-#     return AzureOpenAIClient(config)
-
-
 @pytest.fixture(scope="session")
 def ai_client(config: Settings) -> OpenAIClient:
     """
     Session-scoped Azure OpenAI service.
     Created once and reused across framework.
     """
-    if not config.ai.azure_openai.enabled:
+    if not config.ai.azure_openai_model.enabled:
         return None
 
     return OpenAIClient(config)

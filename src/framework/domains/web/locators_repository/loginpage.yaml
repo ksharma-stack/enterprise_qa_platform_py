@@ -21,19 +21,16 @@ loginpage:
         major_change_requires_approval: true
         minor_on_fallback_change: true
         patch_on_metadata_only: true
-
     intent:
       role: textbox
       name: Username
       placeholder: Username
-
     primary:
       strategy: "accessibility"
       a11y:
         role: "textbox"
         name: "Username1"
         aria_required: true
-
     fallback:
       - strategy: "css"
         value: "#user-name1"
@@ -41,7 +38,6 @@ loginpage:
       - strategy: "xpath"
         value: "//input[@name='user-name1']"
         confidence: 0.60
-
     healing:
       enabled: true
       mode: "suggest-only" # auto | suggest-only | off
@@ -50,13 +46,11 @@ loginpage:
       approvers:
         - "qa-architect"
         - "lead-sdet"
-
     constraints:
       allowed_strategies: ["role", "css", "xpath"]
       disallowed_strategies: ["nth-child", "index-based"]
       visibility: visible
       unique: true
-
     metadata:
       static:
         element_version_history: ["1.0.0"]
@@ -76,22 +70,27 @@ loginpage:
         major_change_requires_approval: true
         minor_on_fallback_change: true
         patch_on_metadata_only: true
-
+    intent:
+      role: textbox
+      name: Password
+      placeholder: Password
     primary:
       strategy: "css"
       value: "#password"
-
     fallback:
       - strategy: "xpath"
         value: "//input[@data-test='password']"
         confidence: 0.70
-
     healing:
       enabled: true
       mode: "auto"
       max_attempts: 2
       approval_required: false
-
+    constraints:
+      allowed_strategies: ["role", "css", "xpath"]
+      disallowed_strategies: ["nth-child", "index-based"]
+      visibility: visible
+      unique: true
     metadata:
       static:
         element_version_history: ["1.0.0"]
@@ -109,18 +108,23 @@ loginpage:
       current: "1.0.0"
       policy:
         major_change_requires_approval: true
-
+    intent:
+      role: button
+      name: Login
+      placeholder: Login
     primary:
       strategy: "accessibility"
       a11y:
         role: "button"
         name: "Login"
-
     fallback: []
-
     healing:
       enabled: false
-
+    constraints:
+      allowed_strategies: ["role", "css", "xpath"]
+      disallowed_strategies: ["nth-child", "index-based"]
+      visibility: visible
+      unique: true
     metadata:
       static:
         element_version_history: ["1.0.0"]
