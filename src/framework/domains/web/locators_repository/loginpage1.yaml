@@ -4,7 +4,6 @@ contract:
   locator_spec: "enterprise-a11y-selfhealing"
 
 loginpage:
-
   page_metadata:
     page_name: "Login Page"
     app: "Customer Portal"
@@ -58,7 +57,7 @@ loginpage:
 
     metadata:
       static:
-        element_version_history: [ "1.0.0" ]
+        element_version_history: ["1.0.0"]
         created_on: "2026-05-04"
         change_reason: "Accessibility-first locator onboarding"
       runtime:
@@ -93,7 +92,7 @@ loginpage:
 
     metadata:
       static:
-        element_version_history: [ "1.0.0" ]
+        element_version_history: ["1.0.0"]
         created_on: "2026-05-04"
         change_reason: "Normalized locator structure with primary and fallback selectors"
       runtime:
@@ -122,7 +121,7 @@ loginpage:
 
     metadata:
       static:
-        element_version_history: [ "1.0.0" ]
+        element_version_history: ["1.0.0"]
         created_on: "2026-05-04"
         change_reason: "Accessibility-first locator onboarding"
       runtime:
