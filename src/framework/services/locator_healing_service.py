@@ -68,8 +68,10 @@ class AiService:
                 "action": "heal | abort | retry",
                 "confidence": float,
                 "locator": {{
-                    "strategy": "role | css | xpath",
-                    "value": "string"
+                    "strategy": "a11y | css | xpath",
+                    "role": "string",
+                    "name": name || '(no accessible name)',
+                    "selector": "string",
                 }}
                 }}
 

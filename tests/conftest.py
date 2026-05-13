@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 import os
-import json
-from typing import Generator, Optional
+from typing import Generator
 from pathlib import Path
-from openai import OpenAI
 import pytest
 
 from playwright.sync_api import (
@@ -17,15 +15,12 @@ from playwright.sync_api import (
     sync_playwright,
 )
 
-from src.framework.adapters.ai_client import AzureOpenAIClient, OpenAIClient
+from src.framework.adapters.ai_client import OpenAIClient
 from src.framework.services.locator_healing_service import AiService, set_ai_service
-from src.framework.core.config.models import Settings
-
-# import framework.core.config.variables import config
+from src.framework.contracts.config_contract import Settings
 from src.framework.core.utils.utils_loader import load_settings
 from src.framework.core.utils.utils_path import mkdir
 from src.framework.core.observability.logger_config.log_setup import LogFactory
-
 from src.framework.adapters.playwright_factory import create_context, create_browser
 
 
@@ -48,6 +43,8 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 # -------------------------
 # Hooks
 # -------------------------
+
+
 @pytest.hookimpl()
 def pytest_sessionstart(session):
     """Session start hook"""
@@ -317,6 +314,7 @@ def authenticated_api_client(api_client, test_user):
 # -------------------------
 # AI Fixtures
 # -------------------------
+
 
 @pytest.fixture(scope="session")
 def ai_client(config: Settings) -> OpenAIClient:

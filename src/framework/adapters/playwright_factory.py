@@ -7,7 +7,7 @@ from dataclasses import dataclass
 # from typing import Literal
 
 from playwright.sync_api import Browser, BrowserContext, Playwright
-from src.framework.core.config.models import WebSettings
+from src.framework.contracts.config_contract import WebSettings
 
 
 @dataclass(frozen=True)

@@ -11,7 +11,7 @@ from typing import Any, Dict, List, Union
 from dotenv import load_dotenv
 import yaml
 
-from src.framework.core.config.models import Settings
+from src.framework.contracts.config_contract import Settings
 from src.framework.core.exceptions.exceptions import ConfigError
 
 

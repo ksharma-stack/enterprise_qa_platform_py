@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from playwright.sync_api import Page, expect
-from src.framework.core.config.models import Settings
+from src.framework.contracts.config_contract import Settings
 from src.framework.core.utils.utils_generic import (
     get_system_username,
     get_worker_id,

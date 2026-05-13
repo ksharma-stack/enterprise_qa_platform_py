@@ -194,4 +194,5 @@ def build_strategy_plan(
 
 
 def is_locator_element_key(key: str) -> bool:
+    """checking if locator element is reserved key"""
     return key not in RESERVED_ELEMENT_KEYS

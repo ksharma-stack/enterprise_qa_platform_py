@@ -15,7 +15,7 @@ from src.framework.contracts.ai_client_contract import AIClientContract
 class AzureOpenAIClient(AIClientContract):
     """
     Wraps open.AzureOpenAI.
-    All configs is inected at construction - no global state.
+    All configs is inejcted at construction - no global state.
     """
 
     def __init__(self, config) -> None:
@@ -44,7 +44,7 @@ class AzureOpenAIClient(AIClientContract):
         return response.choices[0].message.content
 
     def is_ready(self):
-        """Retunr True if ai client is initialized."""
+        """Return True if ai client is initialized."""
         return self._client is not None
 
 

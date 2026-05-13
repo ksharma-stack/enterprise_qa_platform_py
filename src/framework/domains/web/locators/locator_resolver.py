@@ -100,47 +100,38 @@ class LocatorResolver:
 
         if ai_service:
             try:
-                dom_snapshot = page.content()
+                dom_snapshot = page.aria_snapshot()
 
-                ai_result = ai_service.suggest_selectors(
+                suggestion = ai_service.suggest_selectors(
                     definition.get("intent"),
                     dom_snapshot,
                     definition.get("constraints"),
                 )
 
-                # ai_result = ai_service.resolve(
-                #     intent=f"Locate element '{element}' on page",
-                #     constraints={
-                #         "allowed_strategies": ["css", "role", "xpath"],
-                #         "disallowed": ["nth-child", "index-based"],
-                #     },
-                #     dom_snapshot=dom_snapshot,
-                # )
-
-                suggestion = json.loads(ai_result)
-
                 if suggestion.get("confidence", 0) >= 0.6:
                     strat = suggestion["locator"]
 
-                #     ai_locator = LocatorResolver._locator_for_strategy(
-                #         page,
-                #         LocatorStrategy(
-                #             kind=strat["strategy"],
-                #             value=strat["value"],
-                #             label="ai-fallback",
-                #         ),
-                #     )
+                    ai_locator = LocatorResolver._locator_for_strategy(
+                        page,
+                        LocatorStrategy(
+                            kind= strat["strategy"],
+                            role = strat["role"],
+                            name=strat["name"],
+                            selector=strat["selector"],
+                            label="ai-fallback",
+                        ),
+                    )
 
-                #     ai_locator.wait_for(state="visible", timeout=visible_timeout_ms)
+                    ai_locator.wait_for(state="visible", timeout=visible_timeout_ms)
 
-                #     logger.warning(
-                #         "AI self-healing used for locator %s (confidence=%.2f).",
-                #         element,
-                #         suggestion["confidence"],
-                #     )
+                    logger.warning(
+                        "AI self-healing used for locator %s (confidence=%.2f).",
+                        element,
+                        suggestion["confidence"],
+                    )
 
-                # return ai_locator
-
+                return ai_locator
+        
                 logger.warning(
                     "AI suggestion ignored for %s due to low confidence.",
                     element,
@@ -167,7 +158,7 @@ class LocatorResolver:
 
     @staticmethod
     def _locator_for_strategy(page: Page, strat: LocatorStrategy) -> Locator:
-        if strat.kind == "a11y":
+        if strat.kind == "a11y" or "role":
             if not strat.role:
                 raise LocatorResolutionError("a11y strategy missing role")
             return page.get_by_role(strat.role, name=strat.name)  # type: ignore[arg-type]

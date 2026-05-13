@@ -76,10 +76,10 @@ loginpage:
       placeholder: Password
     primary:
       strategy: "css"
-      value: "#password"
+      value: "#password1"
     fallback:
       - strategy: "xpath"
-        value: "//input[@data-test='password']"
+        value: "//input[@data-test='password1']"
         confidence: 0.70
     healing:
       enabled: true
@@ -116,7 +116,7 @@ loginpage:
       strategy: "accessibility"
       a11y:
         role: "button"
-        name: "Login"
+        name: "Login2"
     fallback: []
     healing:
       enabled: false
