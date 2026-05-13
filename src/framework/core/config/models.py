@@ -90,10 +90,39 @@ class AzureOpenAIConfig(BaseModel):
         return self
 
 
+class AzureOpenAIModelConfig(BaseModel):
+    """
+    Azure OpenAI model configuration.
+    """
+
+    enabled: bool = True
+    endpoint: str
+    api_key: str
+    deployment: str
+    temperature: float = 0.2
+    max_tokens: int = 800
+
+    @model_validator(mode="after")
+    def validate_when_enabled(self):
+        """Validates model configs"""
+        if self.enabled:
+            missing = [
+                f
+                for f in ("endpoint", "api_key", "deployment")
+                if getattr(self, f) is None
+            ]
+            if missing:
+                raise ValueError(f"Azure OpenAI enabled but missing fields: {missing}")
+        return self
+
+
 class AISettings(BaseModel):
     """AI capabilities configuration."""
 
     azure_openai: AzureOpenAIConfig = Field(default_factory=AzureOpenAIConfig)
+    azure_openai_model: AzureOpenAIModelConfig = Field(
+        default_factory=AzureOpenAIModelConfig
+    )
 
 
 class Settings(BaseModel):

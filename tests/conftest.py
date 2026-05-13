@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import os
-from pathlib import Path
-import pytest
+import json
 from typing import Generator, Optional
+from pathlib import Path
+from openai import OpenAI
+import pytest
 
 from playwright.sync_api import (
     Browser,
@@ -16,8 +17,8 @@ from playwright.sync_api import (
     sync_playwright,
 )
 
-from src.framework.adapters.azure_openai_client import AzureOpenAIAdapter
-from src.framework.services.locator_healing_service import LocatorHealingService
+from src.framework.adapters.ai_client import AzureOpenAIClient, OpenAIClient
+from src.framework.services.locator_healing_service import AiService, set_ai_service
 from src.framework.core.config.models import Settings
 
 # import framework.core.config.variables import config
@@ -50,15 +51,15 @@ def pytest_addoption(parser: pytest.Parser) -> None:
 @pytest.hookimpl()
 def pytest_sessionstart(session):
     """Session start hook"""
-    logger = LogFactory.get_logger(__name__)
-    logger.info("Test session started")
+    session_logger = LogFactory.get_logger(__name__)
+    session_logger.info("Test session started")
 
 
 @pytest.hookimpl()
 def pytest_sessionfinish(session, exitstatus):
     """Session finish hook"""
-    logger = LogFactory.get_logger(__name__)
-    logger.info("Test session finished", exit_status=exitstatus)
+    session_finish_logger = LogFactory.get_logger(__name__)
+    session_finish_logger.info("Test session finished", exit_status=exitstatus)
 
 
 @pytest.hookimpl(hookwrapper=True, tryfirst=True)
@@ -66,18 +67,18 @@ def pytest_runtest_makereport(item, call: pytest.CallInfo):
     """Store test report for each phase and log results."""
 
     if call.when == "call":
-        logger = LogFactory.get_logger(__name__)
-        outcome = "failed" if call.excinfo else "passed"
+        report_logger = LogFactory.get_logger(__name__)
+        test_outcome = "failed" if call.excinfo else "passed"
 
-        logger.info(
+        report_logger.info(
             "Test executed",
-            outcome=outcome,
+            outcome=test_outcome,
             # duration_sec=call.duration,
         )
 
-    outcome = yield
+    test_outcome = yield
 
-    report = outcome.get_result()
+    report = test_outcome.get_result()
 
     # Only act after the test call phase
     if report.when != "call":
@@ -172,10 +173,6 @@ def config(pytestconfig: pytest.Config) -> Settings:
     # Load settings
     s = load_settings(env=env, config_dir=config_dir)
 
-    # # Ensure artifact folders exist
-    # if detect_ide():
-    #     artifacts = "automation_framework/artifacts"
-    # else:
     artifacts = "artifacts"
     mkdir(f"{artifacts}/screenshots")
     mkdir(f"{artifacts}/traces")
@@ -197,7 +194,7 @@ def logger(config: Settings):
     - Runs automatically (autouse=True) to ensure logger is ready before tests
 
     Args:
-        config: The loaded settings configuration.
+    config: The loaded settings configuration.
 
     Returns:
         Logger instance configured with config from the environment.
@@ -316,21 +313,45 @@ def authenticated_api_client(api_client, test_user):
     api_client.login(test_user.username, test_user.password)
     return api_client
 
+
 # -------------------------
 # AI Fixtures
 # -------------------------
 
 
+# @pytest.fixture(scope="session")
+# def ai_client(config: Settings) -> AzureOpenAIClient:
+#     """
+#     Session-scoped Azure OpenAI service.
+#     Created once and reused across framework.
+#     """
+#     if not config.ai.azure_openai.enabled:
+#         return None
+
+#     return AzureOpenAIClient(config)
+
+
 @pytest.fixture(scope="session")
-def azure_openai_service(config: Settings):
+def ai_client(config: Settings) -> OpenAIClient:
     """
     Session-scoped Azure OpenAI service.
+    Created once and reused across framework.
     """
-
-    # config = app_config.ai.azure_openai
-
-    if not config.enabled:
+    if not config.ai.azure_openai.enabled:
         return None
 
-    adapter = AzureOpenAIAdapter(config)
-    return LocatorHealingService(adapter)
+    return OpenAIClient(config)
+
+
+@pytest.fixture(scope="session")
+def ai_service(ai_client: OpenAIClient) -> AiService:
+    """
+    AIService initialized ONCE for the entire test session.
+    """
+    return AiService(ai_client)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def register_ai_service(ai_service: AiService):
+    """register ai service"""
+    set_ai_service(ai_service)

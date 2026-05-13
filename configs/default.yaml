@@ -45,18 +45,26 @@ logging:
 ai:
   azure_openai:
     enabled: true
-    endpoint: https://complyazurefoundryproject-resource.services.ai.azure.com/api/projects/ComplyAzureFoundryProject"
-    api_key: ${AZURE_OPENAI_API_KEY}
-    project_endpoint: https://complyazurefoundryproject-resource.openai.azure.com/openai/v1
-    azure_openai_endpoint: https://complyazurefoundryproject-resource.openai.azure.com/openai/v1
-    azure_openai_model_endpoint: https://complyazurefoundryproject-resource.services.ai.azure.com/api/projects/ComplyAzureFoundryProject/openai/v1/responses
-    azure_openai_key:
-    # ${AZURE_OPENAI_ENDPOINT}
-    # api_key: ${AZURE_OPENAI_API_KEY}
-    api_version: "2024-02-15-preview"
-    deployment: "gpt-4o"
+    endpoint: https://complyazurefoundryproject-resource.services.ai.azure.com/api/projects/ComplyAzureFoundryProject/openai/v1
+    api_key: AZURE_OPENAI_API_KEY
+    deployment: "ComplyCustomModelFineTuneGpt-4o"
+    api_version: "2024-11-20"
     temperature: 0.2
     max_tokens: 800
+
+    project_endpoint: https://complyazurefoundryproject-resource.openai.azure.com/openai/v1
+    azure_openai_endpoint: https://complyazurefoundryproject-resource.openai.azure.com/openai/v1
+    azure_openai_model_endpoint:
+
+  azure_openai_model:
+    enabled: true
+    endpoint: https://complyazurefoundryproject-resource.services.ai.azure.com/api/projects/ComplyAzureFoundryProject/openai/v1
+    api_key: AZURE_OPENAI_API_KEY
+    deployment: "ComplyCustomModelFineTuneGpt-4o"
+    api_version: "2024-11-20"
+    temperature: 0.2
+    max_tokens: 800
+
     # use_cases: { locator_heal: on|off, rca: on|off, testgen: on|off }
     # redaction: { headers: [ ... ], jsonpaths: [ ... ] }
     # limits: { max_tokens, max_cost_per_run, max_dom_chars }

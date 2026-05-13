@@ -9,9 +9,10 @@ Single responsibility:
 from openai import AzureOpenAI
 
 
-class AzureOpenAIAdapter:
+class AzureOpenAIAdapter1:
     """
-    Thin wrapper over Azure OpenAI client.
+    Thin wrapper over Azure OpenAI client (Wraps open.AzureOpenAI).
+    All configs is inected at construction - no global state.
     """
 
     def __init__(self, config):

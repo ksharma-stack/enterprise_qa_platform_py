@@ -52,6 +52,8 @@ loginpage:
         - "lead-sdet"
 
     constraints:
+      allowed_strategies: ["role", "css", "xpath"]
+      disallowed_strategies: ["nth-child", "index-based"]
       visibility: visible
       unique: true
 

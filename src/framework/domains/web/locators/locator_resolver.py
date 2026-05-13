@@ -5,10 +5,11 @@ Resolve locator YAML to a Playwright Locator using ordered strategies and short 
 from __future__ import annotations
 
 from typing import Any
-
+import json
 from playwright.sync_api import Locator, Page, TimeoutError as PlaywrightTimeoutError
 
 from src.framework.core.exceptions.exceptions import LocatorResolutionError
+from src.framework.services.locator_healing_service import AiService, get_ai_service
 from src.framework.core.observability.logger_config.log_setup import LogFactory
 from src.framework.contracts.locator_contract import (
     LocatorStrategy,
@@ -23,6 +24,9 @@ _DEFAULT_VISIBLE_MS = 8_000
 
 class LocatorResolver:
     """Resolve locators for the sync Playwright API."""
+
+    def __init__(self, ai_service: AiService):
+        self._ai_service = ai_service
 
     @staticmethod
     def resolve(
@@ -61,12 +65,19 @@ class LocatorResolver:
         errors: list[str] = []
         first_locator: Locator | None = None
 
+        # --------------------------------------------------
+        # 1️. DETERMINISTIC RESOLUTION
+        # --------------------------------------------------
+
         for strat in strategies:
             try:
                 loc = LocatorResolver._locator_for_strategy(page, strat)
+
                 if first_locator is None:
                     first_locator = loc
+
                 loc.wait_for(state="visible", timeout=visible_timeout_ms)
+
                 if strat.label != "primary" and healing.mode == "suggest-only":
                     logger.warning(
                         "Locator %s resolved with %s (suggest-only: consider promoting "
@@ -75,10 +86,79 @@ class LocatorResolver:
                         strat.label,
                     )
                 return loc
+
             except PlaywrightTimeoutError:
                 errors.append(f"{strat.label}:{strat.kind} (not visible in time)")
             except LocatorResolutionError as ex:
                 errors.append(f"{strat.label}:{strat.kind} ({ex})")
+
+        # --------------------------------------------------
+        # 2️. AI FALLBACK (ONLY AFTER DETERMINISTIC FAILURE)
+        # --------------------------------------------------
+
+        ai_service = get_ai_service()
+
+        if ai_service:
+            try:
+                dom_snapshot = page.content()
+
+                ai_result = ai_service.suggest_selectors(
+                    definition.get("intent"),
+                    dom_snapshot,
+                    definition.get("constraints"),
+                )
+
+                # ai_result = ai_service.resolve(
+                #     intent=f"Locate element '{element}' on page",
+                #     constraints={
+                #         "allowed_strategies": ["css", "role", "xpath"],
+                #         "disallowed": ["nth-child", "index-based"],
+                #     },
+                #     dom_snapshot=dom_snapshot,
+                # )
+
+                suggestion = json.loads(ai_result)
+
+                if suggestion.get("confidence", 0) >= 0.6:
+                    strat = suggestion["locator"]
+
+                #     ai_locator = LocatorResolver._locator_for_strategy(
+                #         page,
+                #         LocatorStrategy(
+                #             kind=strat["strategy"],
+                #             value=strat["value"],
+                #             label="ai-fallback",
+                #         ),
+                #     )
+
+                #     ai_locator.wait_for(state="visible", timeout=visible_timeout_ms)
+
+                #     logger.warning(
+                #         "AI self-healing used for locator %s (confidence=%.2f).",
+                #         element,
+                #         suggestion["confidence"],
+                #     )
+
+                # return ai_locator
+
+                logger.warning(
+                    "AI suggestion ignored for %s due to low confidence.",
+                    element,
+                )
+
+            except Exception as ex:
+                errors.append(
+                    f"AI fallback failed for locator %s: %s {element} \n {ex}"
+                )
+                logger.exception(
+                    "AI fallback failed for locator %s: %s",
+                    element,
+                    ex,
+                )
+
+        # --------------------------------------------------
+        # 3️. FAILURE (UNCHANGED SEMANTICS)
+        # --------------------------------------------------
 
         detail = "; ".join(errors) if errors else "unknown"
         raise LocatorResolutionError(
